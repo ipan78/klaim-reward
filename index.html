@@ -2,190 +2,186 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+/>
   <title>Kuis Kecepatan Handphone</title>
-
   <style>
-    :root {
-      --bg: #111418;
-      --text: #e6e6e6;
-      --accent: #ffd54a;
-      --danger: #dc3545;
-      --primary: #0d6efd;
+    :root{
+      --bg:#111418;
+      --text:#e6e6e6;
+      --accent:#ffd54a;
+      --danger:#dc3545;
+      --primary:#0d6efd;
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; background: #fff; color: #333; }
+    /* Reset ringan */
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{background:#000;color:#333;font-family:system-ui,Arial,sans-serif}
 
-    .page {
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      background: #fff;
+    /* Layout umum: gunakan blok, bukan flex, biar anti 0-height */
+    .page{
+      min-height:100vh;           /* fallback */
+      min-height:100dvh;          /* modern */
+      padding:16px;
+      display:block;
+      background:#000;            /* agar jika kanvas kecil tetap terlihat */
     }
 
-    .stage {
-      background: var(--bg);
-      color: var(--text);
-      width: 100%;
-      max-width: 600px;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+    /* Bingkai tengah: pakai max-width agar rapi di desktop */
+    .frame{
+      margin:0 auto;
+      width:100%;
+      max-width:600px;
     }
 
-    h1 {
-      color: var(--accent);
-      font-size: clamp(20px, 2.2vw, 28px);
-      text-align: center;
-      margin: 0 0 14px 0;
+    /* Kotak rasio klasik 9:16 (anti “blank”) */
+    .ratio-916{
+      position:relative;
+      width:100%;
+      /* 16/9 = 1.777… → padding-top 177.777% */
+      padding-top:177.7778%;
+      background:#000;           /* letterbox */
+      border-radius:12px;
+      overflow:hidden;
     }
 
-    .track {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      border-bottom: 2px solid #fff;
-      padding: 40px 8px 14px;
-      margin: 0 auto 18px;
-      overflow: hidden;
+    /* Area permainan menutup seluruh rasio */
+    .stage{
+      position:absolute; inset:0;
+      background:var(--bg);
+      color:var(--text);
+      display:block;
+      padding:16px 14px;
     }
 
-    .box {
-      position: relative;
-      width: clamp(46px, 9vw, 80px);
-      height: clamp(68px, 14vw, 120px);
-      border: 2px solid #fff;
-      border-radius: 8px;
-      flex: 0 0 auto;
-      transition: background-color .2s ease;
-      background: transparent;
+    /* Judul */
+    h1{
+      color:var(--accent);
+      font-size:clamp(18px, 4.5vw, 28px);
+      text-align:center;
+      margin:0 0 12px;
     }
 
-    .box::before {
-      content: attr(data-number);
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: -28px;
-      font-weight: 700;
-      font-size: clamp(12px, 2.6vw, 16px);
-      color: #fff;
-      letter-spacing: .5px;
+    /* Track */
+    .track{
+      position:relative;
+      display:flex;               /* aman dipakai di dalam box yang sudah punya tinggi pasti */
+      justify-content:center;
+      gap:8px;
+      width:100%;
+      border-bottom:2px solid #fff;
+      padding:36px 8px 14px;
+      margin:0 auto 14px;
+      overflow:hidden;
     }
 
-    .handphone-icon {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: clamp(28px, 6vw, 48px);
-      line-height: 1;
-      transition: left .1s linear;
-      will-change: left;
+    .box{
+      position:relative;
+      width:clamp(40px, 15vw, 80px);
+      height:clamp(60px, 22vw, 120px);
+      border:2px solid #fff;
+      border-radius:8px;
+      flex:0 0 auto;
+      transition:background-color .2s ease;
+      background:transparent;
+    }
+    .box::before{
+      content:attr(data-number);
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      top:-24px;
+      font-weight:700;
+      font-size:clamp(12px, 3.5vw, 16px);
+      color:#fff;
+      letter-spacing:.4px;
     }
 
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 10px;
-      flex-wrap: wrap;
+    .handphone-icon{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:clamp(28px, 8vw, 48px);
+      line-height:1;
+      transition:left .1s linear;
+      will-change:left;
     }
 
-    .controls button {
-      padding: 10px 18px;
-      font-size: clamp(14px, 2.4vw, 18px);
-      font-weight: 700;
-      border: 0;
-      border-radius: 10px;
-      cursor: pointer;
-      color: #fff;
+    .controls{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:6px;
+      flex-wrap:wrap;
+    }
+    .controls button{
+      padding:10px 16px;
+      font-size:clamp(14px, 3.8vw, 18px);
+      font-weight:700;
+      border:0;
+      border-radius:10px;
+      cursor:pointer;
+      color:#fff;
+    }
+    #startButton{ background:var(--primary); }
+    #stopButton{ background:var(--danger); }
+    #stopButton:disabled{ opacity:.55; cursor:not-allowed; }
+
+    #result{
+      text-align:center;
+      font-size:clamp(13px, 3.8vw, 18px);
+      color:#d7d7d7;
+      min-height:40px;
+      margin:10px 6px 0;
+      font-weight:500;
     }
 
-    #startButton { background: var(--primary); }
-    #stopButton { background: var(--danger); }
-    #stopButton:disabled { opacity: .5; cursor: not-allowed; }
-
-    #result {
-      text-align: center;
-      font-size: clamp(14px, 2.6vw, 18px);
-      color: #cfcfcf;
-      min-height: 40px;
-      margin: 14px 6px 0;
-      font-weight: 500;
-    }
-
-    /* ====== MODE HP (≤650px) DENGAN RASIO 9:16 ====== */
-    @media (max-width:650px) {
-      .page {
-        padding: 0;
-        background: #000;
-        min-height: 100dvh;
-        display: block;
-      }
-
-      .frame-916 {
-        height: 100dvh;
-        width: 100vw;
-        display: grid;
-        place-items: center;
-        background: #000;
-      }
-
-      .stage {
-        width: min(100vw, calc(100dvh * 9 / 16));
-        aspect-ratio: 9 / 16;
-        height: auto;
-        max-width: unset;
-        border-radius: 0;
-        padding: 16px 14px;
-        background: var(--bg);
-      }
-
-      .track {
-        padding-top: 36px;
-        margin-bottom: 16px;
-      }
+    /* Lebar sangat kecil: rapatkan sedikit */
+    @media (max-width:360px){
+      .track{ gap:6px; padding-top:30px; }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="frame-916">
-      <div class="stage">
-        <h1>Kuis Kecepatan: Tekan STOP!</h1>
-        <div class="track" id="track">
-          <div class="box" data-number="16"></div>
-          <div class="box" data-number="15"></div>
-          <div class="box" data-number="14"></div>
-          <div class="box" data-number="13"></div>
-          <div class="box" data-number="12"></div>
-          <div class="box" data-number="11"></div>
-          <div id="handphone" class="handphone-icon">📱</div>
-        </div>
+    <div class="frame">
+      <!-- Rasio aman 9:16 -->
+      <div class="ratio-916">
+        <div class="stage">
+          <h1>Kuis Kecepatan: Tekan STOP!</h1>
 
-        <div class="controls">
-          <button id="startButton">START</button>
-          <button
-            id="stopButton"
-            data-link="https://www.revenuecpmgate.com/xi3i4iib?key=6095d60b9a3feb799e825a0adfc80c31"
-            disabled>
-            STOP
-          </button>
+          <div class="track" id="track">
+            <div class="box" data-number="16"></div>
+            <div class="box" data-number="15"></div>
+            <div class="box" data-number="14"></div>
+            <div class="box" data-number="13"></div>
+            <div class="box" data-number="12"></div>
+            <div class="box" data-number="11"></div>
+            <div id="handphone" class="handphone-icon" aria-hidden="true">📱</div>
+          </div>
+
+          <div class="controls">
+            <button id="startButton">START</button>
+            <button
+              id="stopButton"
+              data-link="https://www.revenuecpmgate.com/xi3i4iib?key=6095d60b9a3feb799e825a0adfc80c31"
+              disabled>STOP</button>
+          </div>
+
+          <p id="result">Tekan START untuk memulai kuis.</p>
         </div>
-        <p id="result">Tekan START untuk memulai kuis.</p>
       </div>
     </div>
   </div>
 
   <script>
+    // Referensi elemen
     const handphone = document.getElementById('handphone');
     const startButton = document.getElementById('startButton');
-    const stopButton = document.getElementById('stopButton');
+    const stopButton  = document.getElementById('stopButton');
     const resultDisplay = document.getElementById('result');
     const boxes = Array.from(document.querySelectorAll('.box'));
     const track = document.getElementById('track');
@@ -196,61 +192,74 @@
     let stepWidth = 0;
     const rewardLink = stopButton.getAttribute('data-link');
 
-    function recalcPositions() {
-      const hpWidth = handphone.offsetWidth || 40;
-      if (boxes.length) {
-        const style = getComputedStyle(boxes[0]);
-        const marginX = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
-        firstBoxOffset = boxes[0].offsetLeft + (boxes[0].offsetWidth / 2) - (hpWidth / 2);
+    // Hitung ulang posisi secara aman
+    function recalcPositions(){
+      try{
+        const hpWidth = handphone.offsetWidth || 40;
+        if(!boxes.length) return;
+
         const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || 0);
+        firstBoxOffset = boxes[0].offsetLeft + (boxes[0].offsetWidth/2) - (hpWidth/2);
         stepWidth = boxes[0].offsetWidth + gap;
-        if (currentIndex < 0) handphone.style.left = `${firstBoxOffset}px`;
+
+        if(currentIndex < 0){
+          handphone.style.left = `${firstBoxOffset}px`;
+        }else{
+          handphone.style.left = `${firstBoxOffset + currentIndex*stepWidth}px`;
+        }
+      }catch(e){
+        // Tampilkan error ke user bila ada, agar tidak "blank"
+        resultDisplay.textContent = 'Gagal menghitung posisi. Muat ulang halaman.';
+        console.error(e);
       }
     }
 
+    // Inisialisasi
     document.addEventListener('DOMContentLoaded', () => {
       recalcPositions();
+
+      // Recalc ketika ukuran berubah / rotasi
       window.addEventListener('resize', () => {
         recalcPositions();
-        if (currentIndex >= 0) {
-          const newPos = firstBoxOffset + currentIndex * stepWidth;
-          handphone.style.left = `${newPos}px`;
-        }
       });
-      window.addEventListener('orientationchange', () => setTimeout(recalcPositions, 250), { passive: true });
+
+      window.addEventListener('orientationchange', () => {
+        setTimeout(recalcPositions, 250);
+      }, {passive:true});
     });
 
-    function startMovement() {
+    function startMovement(){
       boxes.forEach(b => b.style.backgroundColor = 'transparent');
-      stopButton.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--danger');
+      stopButton.style.backgroundColor = '#dc3545'; // fallback langsung
       stopButton.style.color = '#fff';
       stopButton.textContent = 'STOP';
 
       startButton.disabled = true;
       stopButton.disabled = false;
+
       stopButton.removeEventListener('click', claimReward);
       stopButton.addEventListener('click', stopMovement);
+
       resultDisplay.textContent = 'Bergerak Cepat! Tekan STOP!';
-
       currentIndex = 0;
-      recalcPositions();
 
+      recalcPositions();
       clearInterval(movementInterval);
       movementInterval = setInterval(() => {
         currentIndex = (currentIndex + 1) % boxes.length;
-        const newPos = firstBoxOffset + currentIndex * stepWidth;
-        handphone.style.left = `${newPos}px`;
+        handphone.style.left = `${firstBoxOffset + currentIndex*stepWidth}px`;
       }, 100);
     }
 
-    function stopMovement() {
+    function stopMovement(){
       clearInterval(movementInterval);
       stopButton.disabled = true;
       startButton.disabled = true;
 
       const finalBox = boxes[currentIndex];
       const finalNumber = finalBox ? finalBox.getAttribute('data-number') : 'N/A';
-      if (finalBox) {
+
+      if(finalBox){
         finalBox.style.backgroundColor = '#ffd54a';
         resultDisplay.innerHTML = `SELAMAT! Berhenti di <strong>Kotak ${finalNumber}</strong>!<br>Tekan tombol di bawah untuk klaim hadiah!`;
 
@@ -260,27 +269,33 @@
         stopButton.style.color = '#000';
         stopButton.disabled = false;
         stopButton.addEventListener('click', claimReward);
-      } else {
+      }else{
         resultDisplay.textContent = 'Terjadi kesalahan. Coba lagi.';
         startButton.disabled = false;
       }
     }
 
-    function claimReward() {
+    function claimReward(){
+      // buka link hadiah
       window.open(rewardLink, '_blank');
+
+      // reset UI
       stopButton.disabled = true;
       stopButton.textContent = 'STOP';
       stopButton.style.backgroundColor = '#dc3545';
       stopButton.style.color = '#fff';
       stopButton.removeEventListener('click', claimReward);
       stopButton.addEventListener('click', stopMovement);
+
       startButton.disabled = false;
       resultDisplay.textContent = 'Silakan tekan START untuk bermain lagi.';
       boxes.forEach(b => b.style.backgroundColor = 'transparent');
+
       currentIndex = -1;
       recalcPositions();
     }
 
+    // Event tombol
     startButton.addEventListener('click', startMovement);
     stopButton.addEventListener('click', stopMovement);
   </script>
