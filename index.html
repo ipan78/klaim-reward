@@ -133,6 +133,36 @@
 
     /* ======== MODE HP (≤650px): KUNCI RASIO 9:16 ======== */
     @media (max-width:650px){
-      .page{
-        padding:0;                  /* gunakan layar penuh */
-        background:#000
+  /* layar penuh aman */
+  .page{
+    padding:0;
+    background:#000;
+    min-height:100dvh;            /* pastikan ada tinggi */
+    display:block;                /* hindari flex parent mempengaruhi tinggi anak */
+  }
+
+  /* bingkai pusat */
+  .frame-916{
+    height:100dvh;
+    width:100vw;
+    display:grid;                 /* pusatkan aman di semua browser */
+    place-items:center;
+    background:#000;
+  }
+
+  /* KUNCI RASIO 9:16 TANPA height:100% (ini penyebab blank) */
+  .stage{
+    width:min(100vw, calc(100dvh * 9 / 16));
+    aspect-ratio:9 / 16;          /* biarkan aspect-ratio yang mengatur tinggi */
+    height:auto;                  /* <— penting: jangan pakai height:100% */
+    max-width:unset;
+    border-radius:0;
+    padding:16px 14px;
+    background:#111418;           /* pastikan terlihat gelap */
+  }
+
+  .track{
+    padding-top:36px;
+    margin-bottom:16px;
+  }
+}
