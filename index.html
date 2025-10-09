@@ -1,257 +1,138 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
-    <title>Kuis Kecepatan Handphone</title>
-    
-    <style>
-        /* CSS DEFAULT */
-        body {
-            background-color: #FFFFFF !important; 
-            color: #333333; 
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-            /* Hapus display: flex; agar scaling bekerja dengan baik */
-            width: 100%; 
-            overflow-x: hidden; 
-        }
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  />
+  <title>Kuis Kecepatan Handphone</title>
 
-        .container {
-    text-align: center;
-    padding: 20px;
-    background-color: #1a1a1a;
-    border-radius: 10px;
-    width: 600px; 
-    min-height: 400px; /* Gunakan min-height agar fleksibel */
-    box-sizing: border-box; 
-    margin: 0 auto;
-}
-/* Pastikan Anda HAPUS seluruh blok @media (max-width: 650px) yang berisi transform: scale */
-        h1 { 
-            color: gold; 
-            font-size: 2.2em; 
-            margin-top: 0;
-        }
-        
-        .track {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            position: relative; 
-            padding-top: 50px; 
-            border-bottom: 2px solid #fff;
-            width: 100%;
-            overflow: hidden; 
-        }
+  <style>
+    :root{
+      --bg:#111418;
+      --text:#e6e6e6;
+      --accent:#ffd54a;
+      --danger:#dc3545;
+      --primary:#0d6efd;
+    }
 
-        .box {
-            width: 80px; 
-            height: 120px;
-            border: 2px solid #fff;
-            margin: 0 5px;
-            box-sizing: border-box;
-            transition: background-color 0.3s;
-            flex-shrink: 0;
-        }
-        
-        .box::before {
-            content: attr(data-number);
-            position: absolute;
-            top: -30px;
-            font-size: 1.2em;
-            color: white;
-        }
+    /* RESET RINGAN */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#fff;
+      color:#333;
+    }
 
-        /* Ikon Handphone yang Bergerak */
-        .handphone-icon {
-            font-size: 4em; 
-            position: absolute;
-            top: 50%; 
-            transform: translateY(-50%);
-            transition: left 0.1s linear; 
-        }
+    /* WRAPPER UMUM */
+    .page{
+      min-height:100dvh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:#fff;
+    }
 
-        .controls { 
-            margin-top: 20px; 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
-        }
+    /* STAGE: area permainan
+       - Desktop/tablet: maksimal 600px, rasio bebas
+       - Mobile (≤650px): KUNCI rasio 9:16 penuh layar tanpa blur
+    */
+    .stage{
+      background:var(--bg);
+      color:var(--text);
+      width:100%;
+      max-width:600px;
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.2);
+    }
 
-        .controls button {
-            padding: 10px 20px;
-            font-size: 1.2em;
-            margin: 0 10px; 
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
+    h1{
+      color:var(--accent);
+      font-size:clamp(20px, 2.2vw, 28px);
+      text-align:center;
+      margin:0 0 14px 0;
+    }
 
-        #startButton { background-color: #007bff; color: white; }
-        #stopButton { background-color: #dc3545; color: white; }
-        #stopButton:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        #result {
-            margin-top: 20px;
-            font-size: 1.4em;
-            min-height: 40px;
-            font-weight: 500;
-            color: #ccc;
-        }
+    .track{
+      position:relative;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      width:100%;
+      border-bottom:2px solid #fff;
+      padding:40px 8px 14px;
+      margin:0 auto 18px;
+      overflow:hidden;
+    }
 
-        /* ======================================= */
-        /* TRICK SKALA UTAMA UNTUK MOBILE */
-        /* ======================================= */
+    .box{
+      position:relative;           /* agar ::before relatif ke box */
+      width:clamp(46px, 9vw, 80px);
+      height:clamp(68px, 14vw, 120px);
+      border:2px solid #fff;
+      border-radius:8px;
+      flex:0 0 auto;
+      transition:background-color .2s ease;
+      background:transparent;
+    }
+    .box::before{
+      content:attr(data-number);
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      top:-28px;
+      font-weight:700;
+      font-size:clamp(12px, 2.6vw, 16px);
+      color:#fff;
+      letter-spacing:.5px;
+    }
 
-        @media (max-width: 650px) { 
-            /* Memaksa kontainer mengambil lebar penuh viewport */
-            body {
-                justify-content: flex-start; 
-                align-items: flex-start;
-                min-height: 400px;
-            }
+    .handphone-icon{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:clamp(28px, 6vw, 48px);
+      line-height:1;
+      transition:left .1s linear;
+      will-change:left;
+    }
 
-            .container {
-                /* Ini adalah trik intinya: hitung skala yang diperlukan */
-                transform: scale(calc(100vw / 600)); 
-                transform-origin: top left; 
-                margin: 0; 
-                /* Tambahkan margin di bawah agar elemen berikutnya tidak menempel */
-                margin-bottom: calc(400px * (calc(100vw / 600))); 
-            }
-        }
-    </style>
-</head>
-<body>
+    .controls{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .controls button{
+      padding:10px 18px;
+      font-size:clamp(14px, 2.4vw, 18px);
+      font-weight:700;
+      border:0;
+      border-radius:10px;
+      cursor:pointer;
+      color:#fff;
+    }
+    #startButton{background:var(--primary)}
+    #stopButton{background:var(--danger)}
+    #stopButton:disabled{opacity:.5; cursor:not-allowed}
 
-    <div class="container">
-        <h1>Kuis Kecepatan: Tekan STOP!</h1>
-        <div class="track">
-            <div class="box" data-number="16"></div>
-            <div class="box" data-number="15"></div>
-            <div class="box" data-number="14"></div>
-            <div class="box" data-number="13"></div>
-            <div class="box" data-number="12"></div>
-            <div class="box" data-number="11"></div>
-            <div id="handphone" class="handphone-icon">📱</div> 
-        </div>
+    #result{
+      text-align:center;
+      font-size:clamp(14px, 2.6vw, 18px);
+      color:#cfcfcf;
+      min-height:40px;
+      margin:14px 6px 0;
+      font-weight:500;
+    }
 
-        <div class="controls">
-            <button id="startButton">START</button>
-            <button 
-                id="stopButton" 
-                data-link="https://www.revenuecpmgate.com/xi3i4iib?key=6095d60b9a3feb799e825a0adfc80c31" 
-                disabled
-            >
-                STOP
-            </button>
-        </div>
-        <p id="result">Tekan START untuk memulai kuis.</p>
-    </div>
-
-    <script>
-        // LOGIKA JAVASCRIPT
-        
-        const handphone = document.getElementById('handphone');
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-        const resultDisplay = document.getElementById('result');
-        const boxes = document.querySelectorAll('.box');
-
-        let movementInterval; 
-        let currentIndex = -1; 
-        const rewardLink = stopButton.getAttribute('data-link'); 
-        let firstBoxOffset = 0; 
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (boxes.length > 0) {
-                // Trik: hitung lebar ikon secara dinamis
-                const hpWidth = handphone.offsetWidth || 40; 
-                // Hitung offset awal
-                firstBoxOffset = boxes[0].offsetLeft + (boxes[0].offsetWidth / 2) - (hpWidth / 2);
-                handphone.style.left = `${firstBoxOffset}px`;
-            }
-        });
-
-        // --- FUNGSI UTAMA ---
-        function startMovement() {
-            // Reset visual dan status
-            boxes.forEach(box => box.style.backgroundColor = 'transparent');
-            stopButton.style.backgroundColor = '#dc3545';
-            stopButton.textContent = 'STOP';
-            stopButton.removeEventListener('click', claimReward);
-            stopButton.addEventListener('click', stopMovement);
-
-            startButton.disabled = true;
-            stopButton.disabled = false;
-            resultDisplay.textContent = "Bergerak Cepat! Tekan STOP!";
-            
-            currentIndex = 0;
-
-            movementInterval = setInterval(() => {
-                currentIndex++;
-                
-                if (currentIndex >= boxes.length) {
-                    currentIndex = 0; 
-                }
-                
-                // Hitung lebar langkah (box width + margin) secara dinamis
-                const calculatedStepWidth = boxes[0].offsetWidth + (parseFloat(getComputedStyle(boxes[0]).marginRight) * 2);
-                const newPosition = firstBoxOffset + (currentIndex * calculatedStepWidth);
-                
-                handphone.style.left = `${newPosition}px`;
-
-            }, 100); // Kecepatan gerakan
-        }
-
-        function stopMovement() {
-            clearInterval(movementInterval);
-            stopButton.disabled = true;
-            startButton.disabled = true;
-            
-            const finalIndex = currentIndex;
-            const finalBox = boxes[finalIndex];
-            const finalNumber = finalBox ? finalBox.getAttribute('data-number') : 'N/A';
-            
-            if (finalBox) {
-                finalBox.style.backgroundColor = 'gold'; 
-                resultDisplay.innerHTML = `SELAMAT! Berhenti di **Kotak ${finalNumber}**! <br> Tekan tombol di bawah untuk klaim hadiah!`;
-
-                stopButton.removeEventListener('click', stopMovement);
-                stopButton.textContent = 'KLAIM REWARD ✨';
-                stopButton.style.backgroundColor = 'limeGreen';
-                stopButton.style.color = 'black';
-                stopButton.disabled = false;
-                
-                stopButton.addEventListener('click', claimReward);
-
-            } else {
-                 resultDisplay.textContent = "Terjadi kesalahan. Coba lagi.";
-                 startButton.disabled = false;
-            }
-        }
-
-        function claimReward() {
-            window.open(rewardLink, '_blank'); 
-            
-            stopButton.disabled = true;
-            stopButton.textContent = 'STOP'; 
-            stopButton.style.backgroundColor = '#dc3545';
-            stopButton.style.color = 'white';
-            stopButton.removeEventListener('click', claimReward); 
-            stopButton.addEventListener('click', stopMovement); 
-            startButton.disabled = false;
-            resultDisplay.textContent = "Silakan tekan START untuk bermain lagi.";
-
-            boxes.forEach(box => box.style.backgroundColor = 'transparent');
-        }
-
-        // --- EVENT LISTENERS ---
-        startButton.addEventListener('click', startMovement);
-        stopButton.addEventListener('click', stopMovement);
-    </script>
-</body>
-</html>
+    /* ======== MODE HP (≤650px): KUNCI RASIO 9:16 ======== */
+    @media (max-width:650px){
+      .page{
+        padding:0;                  /* gunakan layar penuh */
+        background:#000
