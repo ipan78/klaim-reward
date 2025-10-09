@@ -151,7 +151,7 @@
       <!-- Rasio aman 9:16 -->
       <div class="ratio-916">
         <div class="stage">
-          <h1>Kuis Kecepatan: Tekan STOP!</h1>
+          <h1>PLAY THE GAME TO CLAIM YOUR REWARD</h1>
 
           <div class="track" id="track">
             <div class="box" data-number="16"></div>
@@ -171,7 +171,7 @@
               disabled>STOP</button>
           </div>
 
-          <p id="result">Tekan START untuk memulai kuis.</p>
+          <p id="result">CLICK STAR TO GET STARTED</p>
         </div>
       </div>
     </div>
@@ -240,7 +240,7 @@
       stopButton.removeEventListener('click', claimReward);
       stopButton.addEventListener('click', stopMovement);
 
-      resultDisplay.textContent = 'Bergerak Cepat! Tekan STOP!';
+      resultDisplay.textContent = 'PRESS STOP!';
       currentIndex = 0;
 
       recalcPositions();
@@ -261,7 +261,7 @@
 
       if(finalBox){
         finalBox.style.backgroundColor = '#ffd54a';
-        resultDisplay.innerHTML = `SELAMAT! Berhenti di <strong>Kotak ${finalNumber}</strong>!<br>Tekan tombol di bawah untuk klaim hadiah!`;
+        resultDisplay.innerHTML = `SELAMAT! Berhenti di <strong>Kotak ${finalNumber}</strong>!<br>PRESS THE CLAIM REWARD BUTTON AND GET YOUR PRIZE`;
 
         stopButton.removeEventListener('click', stopMovement);
         stopButton.textContent = 'KLAIM REWARD ✨';
