@@ -19,18 +19,16 @@
         }
 
         .container {
-            text-align: center;
-            padding: 20px;
-            background-color: #1a1a1a;
-            border-radius: 10px;
-            /* Ukuran Acuan untuk Scaling */
-            width: 600px; 
-            height: 400px; 
-            box-sizing: border-box; 
-            margin: 0 auto;
-        }
-
-        /* Elemen Kuis (Gunakan ukuran DEKSTOP yang IDEAL) */
+    text-align: center;
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    width: 600px; 
+    min-height: 400px; /* Gunakan min-height agar fleksibel */
+    box-sizing: border-box; 
+    margin: 0 auto;
+}
+/* Pastikan Anda HAPUS seluruh blok @media (max-width: 650px) yang berisi transform: scale */
         h1 { 
             color: gold; 
             font-size: 2.2em; 
